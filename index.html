@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Virtual ATM System - Online Banking Portal</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- Toast Notification Container -->
+  <div id="toast" class="toast" role="alert" aria-live="polite"></div>
+
+  <!-- Header Bar -->
+  <header class="app-header">
+    <div class="header-container">
+      <div class="brand">
+        <div class="brand-icon">🏧</div>
+        <div class="brand-text">
+          <h1>Virtual ATM Bank</h1>
+          <span class="brand-sub">Secure Digital Banking Portal</span>
+        </div>
+      </div>
+      <div class="header-actions">
+        <div id="userHeaderBadge" class="user-badge" style="display: none;">
+          <span class="user-avatar">👤</span>
+          <div class="user-meta">
+            <span id="headerUserName" class="user-name">User</span>
+            <span id="headerUserAcc" class="user-acc">Acc: 000000</span>
+          </div>
+          <button id="logoutBtn" class="btn btn-sm btn-outline" title="Logout">Logout ⎋</button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="main-content">
+    <!-- AUTH SECTION (Login & Signup) -->
+    <section id="authSection" class="auth-section">
+      <div class="auth-card">
+        <div class="auth-header">
+          <div class="auth-icon-badge">💳</div>
+          <h2>Welcome to Virtual ATM</h2>
+          <p class="auth-lead">Sign in to manage your account or create a new account in seconds.</p>
+        </div>
+
+        <!-- Quick Demo Accounts Helper -->
+        <div class="demo-box">
+          <label for="demoAccountSelect">⚡ Evaluator / Quick Test Mode:</label>
+          <select id="demoAccountSelect" class="form-input">
+            <option value="">Select a pre-loaded test account...</option>
+          </select>
+        </div>
+
+        <!-- Auth Tabs Switcher -->
+        <div class="auth-tabs" role="tablist">
+          <button class="auth-tab-btn active" data-tab="login" role="tab">Login to Account</button>
+          <button class="auth-tab-btn" data-tab="signup" role="tab">Open New Account</button>
+        </div>
+
+        <!-- Login Form -->
+        <div id="loginFormContainer" class="auth-form-wrapper">
+          <form id="loginForm" class="auth-form" autocomplete="off">
+            <div class="form-group">
+              <label for="loginAccount">Account Number</label>
+              <div class="input-with-icon">
+                <span class="input-icon">🏦</span>
+                <input type="text" id="loginAccount" class="form-input" placeholder="e.g. 989555" required>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="loginPin">Security PIN</label>
+              <div class="input-with-icon">
+                <span class="input-icon">🔒</span>
+                <input type="password" id="loginPin" class="form-input" placeholder="Enter 4-digit PIN" required>
+              </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-block">Sign In to ATM</button>
+          </form>
+        </div>
+
+        <!-- Signup Form -->
+        <div id="signupFormContainer" class="auth-form-wrapper" style="display: none;">
+          <form id="signupForm" class="auth-form" autocomplete="off">
+            <div class="form-group">
+              <label for="signupName">Full Legal Name</label>
+              <div class="input-with-icon">
+                <span class="input-icon">👤</span>
+                <input type="text" id="signupName" class="form-input" placeholder="e.g. John Doe" required>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="signupAccount">Choose Account Number</label>
+              <div class="input-with-icon">
+                <span class="input-icon">🔢</span>
+                <input type="text" id="signupAccount" class="form-input" placeholder="e.g. 102030" required>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="signupPin">Create Security PIN</label>
+              <div class="input-with-icon">
+                <span class="input-icon">🔑</span>
+                <input type="password" id="signupPin" class="form-input" placeholder="Create 4-digit PIN" required>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="signupBalance">Initial Deposit Amount (₹)</label>
+              <div class="input-with-icon">
+                <span class="input-icon">₹</span>
+                <input type="number" id="signupBalance" class="form-input" placeholder="0.00" min="0" step="1" value="0">
+              </div>
+              <small class="field-hint">Initial balance is optional (minimum ₹0)</small>
+            </div>
+
+            <button type="submit" class="btn btn-success btn-block">Create Account</button>
+          </form>
+        </div>
+      </div>
+    </section>
+
+    <!-- DASHBOARD SECTION -->
+    <section id="dashboardSection" class="dashboard-section" style="display: none;">
+      
+      <!-- Top Card & Overview Summary Row -->
+      <div class="dashboard-hero">
+        <!-- Interactive Virtual Debit Card -->
+        <div class="debit-card-wrapper">
+          <div class="debit-card">
+            <div class="card-top">
+              <div class="card-chip"></div>
+              <div class="card-contactless">)))</div>
+              <div class="card-brand">VIRTUAL DEBIT</div>
+            </div>
+            
+            <div class="card-number-wrapper">
+              <span id="cardNumberDisplay" class="card-number">5241 •••• •••• 0000</span>
+            </div>
+
+            <div class="card-bottom">
+              <div class="card-holder-info">
+                <span class="card-label">CARD HOLDER</span>
+                <span id="cardHolderName" class="card-name">CARDHOLDER NAME</span>
+              </div>
+              <div class="card-balance-info">
+                <span class="card-label">AVAILABLE BALANCE</span>
+                <span id="cardBalance" class="card-balance">₹0.00</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Quick Action Summary -->
+        <div class="quick-overview-card">
+          <h3>Account Overview</h3>
+          <div class="stat-grid">
+            <div class="stat-item">
+              <span class="stat-label">Total Balance</span>
+              <span id="overviewBalance" class="stat-value text-accent">₹0.00</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-label">Total Recorded Txns</span>
+              <span id="overviewTxnCount" class="stat-value">0</span>
+            </div>
+          </div>
+          <div class="quick-actions-bar">
+            <button class="btn btn-action" onclick="AppUI.switchTab('deposit')">💵 Deposit</button>
+            <button class="btn btn-action" onclick="AppUI.switchTab('withdraw')">🏧 Withdraw</button>
+            <button class="btn btn-action" onclick="AppUI.switchTab('transfer')">🔁 Transfer</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Navigation Bar -->
+      <nav class="dashboard-nav" aria-label="Dashboard Navigation">
+        <button class="nav-btn active" data-tab="overview">
+          <span class="nav-icon">📊</span> Overview
+        </button>
+        <button class="nav-btn" data-tab="deposit">
+          <span class="nav-icon">💵</span> Deposit
+        </button>
+        <button class="nav-btn" data-tab="withdraw">
+          <span class="nav-icon">🏧</span> Withdraw
+        </button>
+        <button class="nav-btn" data-tab="transfer">
+          <span class="nav-icon">🔁</span> Transfer
+        </button>
+        <button class="nav-btn" data-tab="statement">
+          <span class="nav-icon">📜</span> Mini Statement
+        </button>
+        <button class="nav-btn" data-tab="settings">
+          <span class="nav-icon">⚙️</span> Settings
+        </button>
+      </nav>
+
+      <!-- Tab Contents -->
+      <div class="tab-panels">
+
+        <!-- TAB: OVERVIEW -->
+        <div id="tab-overview" class="tab-content active">
+          <div class="panel-card">
+            <div class="panel-header">
+              <h3>Recent Account Activity</h3>
+              <button class="btn btn-sm btn-outline" onclick="AppUI.switchTab('statement')">View All Statement →</button>
+            </div>
+            <div id="recentActivityList" class="activity-list">
+              <!-- Rendered dynamically -->
+            </div>
+          </div>
+        </div>
+
+        <!-- TAB: DEPOSIT -->
+        <div id="tab-deposit" class="tab-content">
+          <div class="panel-card">
+            <div class="panel-header">
+              <h3>Deposit Cash</h3>
+              <p class="panel-desc">Deposit money instantly into your account balance.</p>
+            </div>
+            <form id="depositForm" class="operation-form">
+              <div class="form-group">
+                <label for="depositAmount">Enter Deposit Amount (₹)</label>
+                <div class="input-with-icon">
+                  <span class="input-icon">₹</span>
+                  <input type="number" id="depositAmount" class="form-input form-input-lg" placeholder="0.00" min="1" step="1" required>
+                </div>
+              </div>
+
+              <div class="quick-chips">
+                <span class="chips-label">Quick Add:</span>
+                <button type="button" class="chip-btn quick-deposit-btn" data-amount="500">+ ₹500</button>
+                <button type="button" class="chip-btn quick-deposit-btn" data-amount="1000">+ ₹1,000</button>
+                <button type="button" class="chip-btn quick-deposit-btn" data-amount="2000">+ ₹2,000</button>
+                <button type="button" class="chip-btn quick-deposit-btn" data-amount="5000">+ ₹5,000</button>
+              </div>
+
+              <button type="submit" class="btn btn-success btn-lg btn-block">Confirm Cash Deposit</button>
+            </form>
+          </div>
+        </div>
+
+        <!-- TAB: WITHDRAW -->
+        <div id="tab-withdraw" class="tab-content">
+          <div class="panel-card">
+            <div class="panel-header">
+              <h3>Withdraw Cash</h3>
+              <p class="panel-desc">Fast cash withdrawal with instant balance verification.</p>
+            </div>
+            <form id="withdrawForm" class="operation-form">
+              <div class="form-group">
+                <label for="withdrawAmount">Enter Withdrawal Amount (₹)</label>
+                <div class="input-with-icon">
+                  <span class="input-icon">₹</span>
+                  <input type="number" id="withdrawAmount" class="form-input form-input-lg" placeholder="0.00" min="1" step="1" required>
+                </div>
+              </div>
+
+              <div class="quick-chips">
+                <span class="chips-label">Fast Cash:</span>
+                <button type="button" class="chip-btn quick-withdraw-btn" data-amount="500">₹500</button>
+                <button type="button" class="chip-btn quick-withdraw-btn" data-amount="1000">₹1,000</button>
+                <button type="button" class="chip-btn quick-withdraw-btn" data-amount="2000">₹2,000</button>
+                <button type="button" class="chip-btn quick-withdraw-btn" data-amount="5000">₹5,000</button>
+              </div>
+
+              <button type="submit" class="btn btn-primary btn-lg btn-block">Confirm Cash Withdrawal</button>
+            </form>
+          </div>
+        </div>
+
+        <!-- TAB: TRANSFER -->
+        <div id="tab-transfer" class="tab-content">
+          <div class="panel-card">
+            <div class="panel-header">
+              <h3>Transfer Funds</h3>
+              <p class="panel-desc">Send money seamlessly to any registered account.</p>
+            </div>
+            <form id="transferForm" class="operation-form">
+              <div class="form-group">
+                <label for="transferRecipient">Recipient Account Number</label>
+                <div class="input-with-icon">
+                  <span class="input-icon">🏦</span>
+                  <input type="text" id="transferRecipient" class="form-input" placeholder="e.g. 989666" required>
+                </div>
+                <div id="recipientPreview" class="field-hint"></div>
+              </div>
+
+              <div class="form-group">
+                <label for="transferAmount">Transfer Amount (₹)</label>
+                <div class="input-with-icon">
+                  <span class="input-icon">₹</span>
+                  <input type="number" id="transferAmount" class="form-input form-input-lg" placeholder="0.00" min="1" step="1" required>
+                </div>
+              </div>
+
+              <button type="submit" class="btn btn-primary btn-lg btn-block">Confirm Fund Transfer</button>
+            </form>
+          </div>
+        </div>
+
+        <!-- TAB: MINI STATEMENT -->
+        <div id="tab-statement" class="tab-content">
+          <div class="panel-card">
+            <div class="panel-header statement-header">
+              <div>
+                <h3>Mini Statement</h3>
+                <p class="panel-desc">Complete chronological record of all your transactions.</p>
+              </div>
+              <div class="filter-wrapper">
+                <label for="statementFilter" class="sr-only">Filter transactions</label>
+                <select id="statementFilter" class="form-input form-input-sm">
+                  <option value="all">All Transactions</option>
+                  <option value="deposit">Deposits Only</option>
+                  <option value="withdraw">Withdrawals Only</option>
+                  <option value="transfer">Transfers Only</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="table-responsive">
+              <table class="statement-table">
+                <thead>
+                  <tr>
+                    <th>Txn ID</th>
+                    <th>Date & Time</th>
+                    <th>Type</th>
+                    <th>Amount</th>
+                    <th>Resulting Balance</th>
+                  </tr>
+                </thead>
+                <tbody id="statementTableBody">
+                  <!-- Rendered dynamically -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- TAB: SETTINGS -->
+        <div id="tab-settings" class="tab-content">
+          <div class="panel-card">
+            <div class="panel-header">
+              <h3>Security & Preferences</h3>
+              <p class="panel-desc">Update your security PIN or manage test data.</p>
+            </div>
+
+            <!-- PIN Change Form -->
+            <form id="changePinForm" class="settings-form">
+              <h4>Change Security PIN</h4>
+              <div class="form-group">
+                <label for="oldPin">Current PIN</label>
+                <input type="password" id="oldPin" class="form-input" required>
+              </div>
+              <div class="form-group">
+                <label for="newPin">New 4-digit PIN</label>
+                <input type="password" id="newPin" class="form-input" required>
+              </div>
+              <div class="form-group">
+                <label for="confirmPin">Confirm New PIN</label>
+                <input type="password" id="confirmPin" class="form-input" required>
+              </div>
+              <button type="submit" class="btn btn-outline">Update PIN</button>
+            </form>
+
+            <hr class="divider">
+
+            <div class="danger-zone">
+              <h4>Reset Demo Data</h4>
+              <p>Restore all 7 accounts and 28 original transactions back to initial state.</p>
+              <button id="resetDataBtn" class="btn btn-danger btn-sm">Reset All Test Data</button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+  </main>
+
+  <footer class="app-footer">
+    <div class="footer-container">
+      <p>© 2026 Virtual ATM Banking System · Rebuilt for Vercel & GitHub</p>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="js/data.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
