@@ -1,6 +1,10 @@
 import streamlit as st
 import sqlite3
 from atm import ATM
+from database import init_db
+
+# Ensure database is initialized
+init_db()
 
 def signup():
     st.subheader("Create an Account")
