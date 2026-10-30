@@ -6,33 +6,44 @@
 // --- Database Layer ---
 const ATMDB = {
   STORAGE_KEY: 'virtual_atm_storage_v1',
+  _memoryFallback: null,
 
   init() {
-    const existing = localStorage.getItem(this.STORAGE_KEY);
-    if (!existing) {
-      this.resetToSeed();
+    try {
+      const existing = localStorage.getItem(this.STORAGE_KEY);
+      if (!existing) {
+        this.resetToSeed();
+      }
+    } catch (e) {
+      this._memoryFallback = JSON.parse(JSON.stringify(SEED_DATA));
     }
   },
 
   resetToSeed() {
-    // Clone seed data to avoid mutation
     const initial = JSON.parse(JSON.stringify(SEED_DATA));
-    localStorage.setItem(this.STORAGE_KEY, JSON.stringify(initial));
+    try {
+      localStorage.setItem(this.STORAGE_KEY, JSON.stringify(initial));
+    } catch (e) {
+      this._memoryFallback = initial;
+    }
     return initial;
   },
 
   getData() {
     try {
       const data = localStorage.getItem(this.STORAGE_KEY);
-      return data ? JSON.parse(data) : this.resetToSeed();
+      return data ? JSON.parse(data) : (this._memoryFallback || this.resetToSeed());
     } catch (e) {
-      console.error('Failed to parse storage, resetting', e);
-      return this.resetToSeed();
+      return this._memoryFallback || this.resetToSeed();
     }
   },
 
   saveData(data) {
-    localStorage.setItem(this.STORAGE_KEY, JSON.stringify(data));
+    try {
+      localStorage.setItem(this.STORAGE_KEY, JSON.stringify(data));
+    } catch (e) {
+      this._memoryFallback = data;
+    }
   },
 
   getUsers() {
@@ -91,20 +102,35 @@ const ATMService = {
   login(accountNumber, pin) {
     const user = ATMDB.getUser(accountNumber);
     if (user && String(user.pin).trim() === String(pin).trim()) {
-      sessionStorage.setItem('current_user_account', user.account_number);
+      try {
+        sessionStorage.setItem('current_user_account', user.account_number);
+      } catch (e) {
+        window.__currentUserAccount = user.account_number;
+      }
       return { success: true, user };
     }
     return { success: false, message: 'Invalid Account Number or PIN' };
   },
 
   getCurrentUser() {
-    const acc = sessionStorage.getItem('current_user_account');
+    let acc = null;
+    try {
+      acc = sessionStorage.getItem('current_user_account');
+    } catch (e) {}
+    if (!acc && typeof window !== 'undefined' && window.__currentUserAccount) {
+      acc = window.__currentUserAccount;
+    }
     if (!acc) return null;
     return ATMDB.getUser(acc);
   },
 
   logout() {
-    sessionStorage.removeItem('current_user_account');
+    try {
+      sessionStorage.removeItem('current_user_account');
+    } catch (e) {}
+    if (typeof window !== 'undefined') {
+      delete window.__currentUserAccount;
+    }
   },
 
   signup(name, accountNumber, pin, initialBalance = 0) {
